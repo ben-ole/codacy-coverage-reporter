@@ -14,11 +14,13 @@ use hyper::header::{Headers, ContentType};
 use std::fs::File;
 use std::io::prelude::*;
 use std::error::Error;
+use std::collections::HashMap;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize)]
 struct FileReport {
     filename: String,
     total: u8,
+    coverage: HashMap<String, u8>
 }
 
 header! { (ProjectToken, "project_token") => [String] }
@@ -71,9 +73,9 @@ fn file_reports(source: &serde_json::Value, prefix: &str) -> serde_json::Value {
   let files_cov: Vec<FileReport> = files.iter().map( |f| {
     let name = f["name"].as_str().unwrap();
     let filename = prefix.to_owned() + name;
+    let total = f["coverage"].as_f64().unwrap() * 100.0;
 
-    let coverage = f["coverage"].as_f64().unwrap() * 100.0;
-    FileReport { filename, total: coverage.round() as u8 }
+    FileReport { filename, total: total.round() as u8, coverage: HashMap::new() }
 
   }).collect();
 
