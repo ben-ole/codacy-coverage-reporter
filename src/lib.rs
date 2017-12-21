@@ -1,18 +1,18 @@
-use std::fs::File;
-use std::io::prelude::*;
-use std::error::Error;
-
 #[macro_use]
 extern crate serde_json;
 
 #[macro_use]
 extern crate serde_derive;
 
-pub struct Config {
-    pub filename: String,
-    pub path_prefix: String,
-    pub output: Option<String>
-}
+extern crate clap;
+extern crate reqwest;
+
+#[macro_use] 
+extern crate hyper;
+
+use std::fs::File;
+use std::io::prelude::*;
+use std::error::Error;
 
 #[derive(Debug, Serialize, Deserialize)]
 struct FileReport {
@@ -20,9 +20,11 @@ struct FileReport {
     total: f64,
 }
 
-pub fn run(config: Config) -> Result<(), Box<Error>> {
+header! { (ProjectToken, "project_token") => [String] }
 
-  let source = read_source( &config.filename )?;
+pub fn run(config: clap::ArgMatches) -> Result<(), Box<Error>> {
+
+  let source = read_source( config.value_of("INPUT").unwrap() )?;
 
   let cov = source["coverage"].clone();
 
@@ -30,46 +32,28 @@ pub fn run(config: Config) -> Result<(), Box<Error>> {
 
   let body = json!({
     "total": cov,
-    "fileReports": file_reports(&target, &config.path_prefix)
+    "fileReports": file_reports(&target, config.value_of("PREFIX").unwrap_or(""))
   });
 
-  if let Some(ref path) = config.output {
+  if let Some(ref path) = config.value_of("OUTPUT") {
     let mut file = File::create(path)?;
     file.write_all(body.to_string().as_bytes())?;  
-  } else {
+  }
+  
+  if config.occurrences_of("v") == 2 {
     println!("{}", body);
   }
 
-  Ok(())
+  send( body.to_string(), 
+        config.value_of("COMMIT").unwrap(), 
+        config.value_of("LANGUAGE").unwrap_or("swift"),
+        config.value_of("PROJECT_TOKEN").unwrap() )
 }
 
 // Helper
-impl Config {
-  pub fn new(args: &[String]) -> Result<Config, &'static str> {
-
-    if args.len() < 2 {
-        return Err("usage: codacy-xcov path/source.json [path/output.json] [file_prefix]");
-    }
-
-    let filename = args[1].clone();
-
-
-    let mut output = None;
-    if args.len() > 2 {
-      output = Some(args[2].clone());
-    }
-
-    let mut path_prefix = String::new();
-    if args.len() > 3 {
-      path_prefix = args[3].clone();
-    }
-
-    Ok(Config { filename, output, path_prefix })
-  }
-}
 
 /// read xcov json report
-fn read_source(path: &String) -> Result<serde_json::Value, Box<Error>> {
+fn read_source(path: &str) -> Result<serde_json::Value, Box<Error>> {
 
   let mut f = File::open(path)?;
 
@@ -79,7 +63,7 @@ fn read_source(path: &String) -> Result<serde_json::Value, Box<Error>> {
   Ok( serde_json::from_str(&contents)? )
 }
 
-fn file_reports(source: &serde_json::Value, prefix: &String) -> serde_json::Value {  
+fn file_reports(source: &serde_json::Value, prefix: &str) -> serde_json::Value {  
 
   let files = &source["files"].as_array().unwrap();
 
@@ -100,3 +84,25 @@ fn select_target(source: &serde_json::Value) -> Result<&serde_json::Value, Box<E
   Ok(targets)
 }
 
+
+fn send(body: String, commit_uuid: &str, language: &str, project_token: &str) -> Result<(),Box<Error>> {
+  let client = reqwest::Client::new();
+  
+  let path = "https://api.codacy.com/2.0/coverage/".to_owned() + commit_uuid + "/" + language;
+  let url = reqwest::Url::parse(&path)?;
+
+  let bytes: Vec<u8> = body.into_bytes();
+
+  let req = client.post(url)
+    .body(bytes)
+    .header(ProjectToken(project_token.to_string()))    
+    .build()?;
+
+  println!("request = {:?}", req);    
+
+  let mut resp = client.execute(req)?;
+
+  println!("response = {:?}", resp.text()?);
+
+  Ok(())
+}
