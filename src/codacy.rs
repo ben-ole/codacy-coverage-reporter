@@ -6,10 +6,16 @@ use clap;
 use std::fs::File;
 use std::io::prelude::*;
 
+// default codacy API endpoint
 const BASE_URI: &'static str = "https://api.codacy.com/2.0/coverage/";
-    
+
+// codacy authentication header definition
 header! { (ProjectToken, "project_token") => [String] }
 
+// PUBLIC
+
+// use the supplied parser to extract the coverage and send them over to
+// to codacy.
 pub fn report<'a, T: parsers::Parser<'a>>(parser: &T, config: clap::ArgMatches)
          -> Result<(), Box<Error>> {
 
@@ -33,6 +39,9 @@ pub fn report<'a, T: parsers::Parser<'a>>(parser: &T, config: clap::ArgMatches)
     
 }
 
+// PRIVATE
+
+// create request payload and send to codacy api
 fn send(body: String, commit_uuid: &str, language: &str, project_token: &str)
             -> Result<(),Box<Error>> {
 

@@ -9,6 +9,7 @@ pub struct XCov<'a> {
     source: &'a serde_json::Value
 }
 
+// implementation of the generic parser trait for `swift xcov` reports
 impl<'a> Parser<'a> for XCov<'a> {
 
     fn new(source: &'a serde_json::Value) -> XCov {

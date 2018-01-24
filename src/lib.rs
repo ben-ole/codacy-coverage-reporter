@@ -14,6 +14,9 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::error::Error;
 
+// PUBLIC
+
+// parse source with given options and send coverage over to codacy
 pub fn run(config: clap::ArgMatches) -> Result<(), Box<Error>> {
 
   let source = read_source( config.value_of("INPUT").unwrap() )?;
@@ -23,8 +26,9 @@ pub fn run(config: clap::ArgMatches) -> Result<(), Box<Error>> {
   codacy::report(&parser, config)
 }
 
-// Helper
+// PRIVATE
 
+// load source coverage from file at given path and parse json
 fn read_source(path: &str) -> Result<serde_json::Value, Box<Error>> {
 
   let mut f = File::open(path)?;
