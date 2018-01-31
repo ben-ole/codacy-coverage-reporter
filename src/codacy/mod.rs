@@ -16,10 +16,10 @@ header! { (ProjectToken, "project_token") => [String] }
 
 // use the supplied parser to extract the coverage and send them over to
 // to codacy.
-pub fn report<'a, T: parsers::Parser<'a>>(parser: &T, config: clap::ArgMatches)
+pub fn report<'a, T: parsers::Parser<'a>>(parser: &T, config: &clap::ArgMatches)
          -> Result<(), Box<Error>> {
 
-  let path_prefix = config.value_of("PREFIX").unwrap_or("");
+  let path_prefix = &config.value_of("PREFIX").unwrap_or("");
 
   let body = json!({
     "total": parser.total_coverage(),

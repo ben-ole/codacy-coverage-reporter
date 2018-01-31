@@ -7,34 +7,23 @@ extern crate serde_json;
 #[macro_use]
 extern crate hyper;
 
+use std::error::Error;
+
 mod parsers;
 mod codacy;
+mod source;
 
-use std::fs::File;
-use std::io::prelude::*;
-use std::error::Error;
+use source::Source;
 
 // PUBLIC
 
 // parse source with given options and send coverage over to codacy
 pub fn run(config: clap::ArgMatches) -> Result<(), Box<Error>> {
 
-  let source = read_source( config.value_of("INPUT").unwrap() )?;
+  let source: source::json_file::JsonFile = source::Source::new(&config);
+  let json = source.load()?;
+    
+  let parser: parsers::xcov::XCov = parsers::Parser::new(&json);
 
-  let parser: parsers::xcov::XCov = parsers::Parser::new(&source);
-
-  codacy::report(&parser, config)
-}
-
-// PRIVATE
-
-// load source coverage from file at given path and parse json
-fn read_source(path: &str) -> Result<serde_json::Value, Box<Error>> {
-
-  let mut f = File::open(path)?;
-
-  let mut contents = String::new();
-  f.read_to_string(&mut contents)?;
-
-  Ok( serde_json::from_str(&contents)? )
+  codacy::report(&parser, &config)
 }
