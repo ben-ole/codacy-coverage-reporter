@@ -9,12 +9,11 @@ extern crate hyper;
 
 use std::error::Error;
 
-mod parsers;
-mod codacy;
+// mod parsers;
+// mod codacy;
 mod source;
 
-use source::Source;
-use parsers::Parser;
+// use parsers::Parser;
 
 // PUBLIC
 
@@ -22,28 +21,24 @@ use parsers::Parser;
 pub fn run(config: clap::ArgMatches) -> Result<(), Box<Error>> {
 
   // select source loader based on arguments
-  let default_type = "JSON";
-  let file_type = config.value_of("TYPE").unwrap_or(default_type);
+  let file_type = config.value_of("TYPE").unwrap_or("");
+  let source = source::SourceType::new(file_type);
+ 
+  let path = config.value_of("INPUT").unwrap();
+  let input = source?.load(path)?;
 
-  let source: Option<Box<source::Source>> = match file_type {
-      "JSON" =>  Some(Box::new(source::json_file::JsonFile::new(&config))),
-      "XML"  =>  Some(Box::new(source::xml_file::XmlFile::new(&config))),
-      _      =>  None,
-  };
+  Ok(())
+  // // select source parser based on arguments
+  // let default_parser = "XCOV";
+  // let parser_type = config.value_of("PARSER").unwrap_or(default_parser);
 
-  let input = source.unwrap().load()?;
+  // let parser_option: Option<Box<parsers::Parser>> = match parser_type {
+  //     "XCOV" =>  Some(Box::new(parsers::xcov::XCov::new(&input))),
+  //     _      =>  None,
+  // };
 
-  // select source parser based on arguments
-  let default_parser = "XCOV";
-  let parser_type = config.value_of("PARSER").unwrap_or(default_parser);
+  // let parser = parser_option.unwrap();
 
-  let parser_option: Option<Box<parsers::Parser>> = match parser_type {
-      "XCOV" =>  Some(Box::new(parsers::xcov::XCov::new(&input))),
-      _      =>  None,
-  };
-
-  let parser = parser_option.unwrap();
-
-  // run
-  codacy::report(&parser, &config)
+  // // run
+  // codacy::report(&parser, &config)
 }

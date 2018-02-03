@@ -1,13 +1,44 @@
 use serde_json;
+
 use std::error::Error;
-use clap;
+use std::fs::File;
+use std::io::prelude::*;
 
-pub mod json_file;
-pub mod xml_file;
+pub enum SourceType {
+    JsonFile,
+    XmlFile
+}
 
-// generic trait interface for source loader 
-pub trait Source<'a> {
-  fn new(config: &'a clap::ArgMatches) -> Self where Self: Sized;
+impl SourceType {
 
-  fn load(&self) -> Result<serde_json::Value, Box<Error>>;
+    pub fn new(from: &str) -> Result<SourceType, &'static str> {
+
+        match from {
+            "JSON" => Ok( SourceType::JsonFile ),
+            "XML"  => Err( "Not yet supported" ),
+                _  => Ok ( SourceType::JsonFile ) // default
+       } 
+    }
+
+    pub fn load(&self, path: &str) -> Result<serde_json::Value, String> {
+  
+        match *self {
+            SourceType::JsonFile => self.load_json_file(path),
+            SourceType::XmlFile  => Err("Not yet supported".to_string())
+        }
+    }
+
+    fn load_json_file(&self, path: &str) -> Result<serde_json::Value, String> {
+        let contents = self.load_file(path)?;
+        serde_json::from_str(&contents).map_err(|e| e.to_string())
+    }
+
+    fn load_file(&self, path: &str) -> Result<String, String> {
+        let mut f = File::open(path).map_err(|e| e.to_string())?;
+
+        let mut contents = String::new();
+        f.read_to_string(&mut contents).map_err(|e| e.to_string())?;
+
+        return Ok(contents)
+    }
 }
