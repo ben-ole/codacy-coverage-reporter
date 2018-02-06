@@ -8,6 +8,7 @@ pub enum Parser {
 
 impl Parser {
 
+    // convenience initializer: load Parser from string with content
     pub fn new(from: &str, data: serde_json::Value) -> Result<Parser, &'static str> {
 
         match from {
@@ -16,17 +17,19 @@ impl Parser {
         }
     }
 
+    // get total coverage of project
     pub fn total_coverage(&self) -> u8 {
 
         match *self {
-            Parser::Xcov(ref content) => xcov::total_cov_xcov(content)
+            Parser::Xcov(ref content) => xcov::total_cov(content)
         }
     }
 
+    // get coverage per file
     pub fn file_coverage(&self, path_prefix: &str) -> serde_json::Value  {
 
         match *self {
-            Parser::Xcov(ref content) => xcov::file_cov_xcov(&content, path_prefix)
+            Parser::Xcov(ref content) => xcov::file_cov(&content, path_prefix)
         }
     }
 

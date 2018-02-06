@@ -3,7 +3,7 @@ use serde_json;
 use std::fs::File;
 use std::io::prelude::*;
 
-pub fn load_json_file(path: &str) -> Result<serde_json::Value, String> {
+pub fn load(path: &str) -> Result<serde_json::Value, String> {
     let contents = load_file(path)?;
     serde_json::from_str(&contents).map_err(|e| e.to_string())
 }
