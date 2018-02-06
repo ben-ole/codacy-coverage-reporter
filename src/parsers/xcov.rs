@@ -1,31 +1,17 @@
 use serde_json;
 use std::collections::HashMap;
 
-// internal
-use parsers::Parser;
+// XCov
 
-#[derive(Debug)]
-pub struct XCov<'a> {
-    source: &'a serde_json::Value
+pub fn total_cov_xcov(content: &serde_json::Value) -> u8 {
+    let acc_cov = &content["coverage"].as_f64().unwrap() * 100.0;
+    acc_cov.round() as u8
 }
 
-// implementation of the generic parser trait for `swift xcov` reports
-impl<'a> Parser<'a> for XCov<'a> {
+pub fn file_cov_xcov(content: &serde_json::Value, path_prefix: &str) -> serde_json::Value {
+    let files = &content["files"].as_array().unwrap();
 
-    fn new(source: &'a serde_json::Value) -> XCov {
-      let first_target = &source["targets"][0];
-      XCov { source: first_target }
-    }
-
-    fn total_coverage(&self) -> u8 {
-      let acc_cov = self.source["coverage"].as_f64().unwrap() * 100.0;
-      acc_cov.round() as u8
-    }
-
-    fn file_coverage(&self, path_prefix: &str) -> serde_json::Value {
-      let files = self.source["files"].as_array().unwrap();
-
-      let files_cov: Vec<serde_json::Value> = files.iter().map( |f| {
+    let files_cov: Vec<serde_json::Value> = files.iter().map( |f| {
 
         let name = f["name"].as_str().unwrap();
         let filename = path_prefix.to_owned() + name;
@@ -34,14 +20,12 @@ impl<'a> Parser<'a> for XCov<'a> {
         let function_level_coverage: HashMap<&str, u8> = HashMap::new();
 
         json!({
-          "filename": filename,
-          "total": total.round() as u8,
-          "coverage": function_level_coverage
+            "filename": filename,
+            "total": total.round() as u8,
+            "coverage": function_level_coverage
         })
 
-      }).collect();
+    }).collect();
 
-      json!(files_cov)
-    }
-
+    json!(files_cov)
 }
