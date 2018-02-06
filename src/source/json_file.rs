@@ -16,3 +16,43 @@ fn load_file(path: &str) -> Result<String, String> {
 
     return Ok(contents)
 }
+
+// UNIT TESTS
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+    use std::fs::*;
+
+    #[test]
+    fn test_load_file() {
+
+        let expected_content = "{\"codacy\": \"🚀\"}";
+        create_test_file("tmp/dummy.json", expected_content);
+
+        let actual_content = load_file("tmp/dummy.json");
+
+        assert_eq!(actual_content.unwrap(), expected_content);
+    }
+
+
+    #[test]
+    fn test_load() {
+
+        let file_content = "{\"codacy\": \"🚀\"}";
+        create_test_file("tmp/dummy.json", file_content);
+
+        let actual_content = load("tmp/dummy.json");
+        assert_eq!(actual_content.unwrap()["codacy"], "🚀");
+    }
+
+    // test utils
+
+    fn create_test_file(name: &str, text: &str) {
+        create_dir("tmp/").unwrap_or(());
+        let mut f = File::create(name).unwrap();
+        f.write_all(text.as_bytes()).unwrap();
+        f.sync_all().unwrap();
+    }
+}
