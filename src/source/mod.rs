@@ -1,12 +1,10 @@
 use serde_json;
 
-use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
 
 pub enum SourceType {
-    JsonFile,
-    XmlFile
+    JsonFile
 }
 
 impl SourceType {
@@ -24,7 +22,6 @@ impl SourceType {
   
         match *self {
             SourceType::JsonFile => self.load_json_file(path),
-            SourceType::XmlFile  => Err("Not yet supported".to_string())
         }
     }
 
