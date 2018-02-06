@@ -12,8 +12,7 @@ impl SourceType {
 
         match from {
             "JSON" => Ok( SourceType::JsonFile ),
-            "XML"  => Err( "Not yet supported" ),
-                _  => Ok ( SourceType::JsonFile ) // default
+                _  => Err ( "Not supported parser" )
        } 
     }
 
