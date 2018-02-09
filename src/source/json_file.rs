@@ -23,15 +23,17 @@ fn load_file(path: &str) -> Result<String, String> {
 mod tests {
 
     use super::*;
-    use std::fs::*;
-
+    use std::env;
+    
     #[test]
     fn test_load_file() {
 
         let expected_content = "{\"codacy\": \"🚀\"}";
-        create_test_file("tmp/dummy.json", expected_content);
+        create_test_file("dummy.json", expected_content);
 
-        let actual_content = load_file("tmp/dummy.json");
+        let mut dir = env::temp_dir();
+        dir.push("dummy.json");
+        let actual_content = load_file(dir.to_str().unwrap());
 
         assert_eq!(actual_content.unwrap(), expected_content);
     }
@@ -41,17 +43,22 @@ mod tests {
     fn test_load() {
 
         let file_content = "{\"codacy\": \"🚀\"}";
-        create_test_file("tmp/dummy.json", file_content);
+        create_test_file("dummy.json", file_content);
 
-        let actual_content = load("tmp/dummy.json");
+        let mut dir = env::temp_dir();
+        dir.push("dummy.json");
+        let actual_content = load(dir.to_str().unwrap());
         assert_eq!(actual_content.unwrap()["codacy"], "🚀");
     }
 
     // test utils
 
     fn create_test_file(name: &str, text: &str) {
-        create_dir("tmp/").unwrap_or(());
-        let mut f = File::create(name).unwrap();
+        
+        let mut dir = env::temp_dir();
+        dir.push(name);
+        
+        let mut f = File::create(dir).unwrap();
         f.write_all(text.as_bytes()).unwrap();
         f.sync_all().unwrap();
     }
