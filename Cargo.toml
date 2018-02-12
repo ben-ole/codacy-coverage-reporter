@@ -1,7 +1,7 @@
 [package]
-name = "codacy-xcov"
+name = "covrep"
 version = "0.1.0"
-authors = ["Benjamin Müller <benjamin@7mind.de>"]
+authors = ["Benjamin Müller <ben.mueller@me.com>"]
 
 [dependencies]
 serde = "1.0.24"

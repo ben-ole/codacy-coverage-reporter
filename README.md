@@ -1,10 +1,12 @@
+[![Build Status](https://travis-ci.org/ben-ole/codacy-xcov.svg?branch=master)](https://travis-ci.org/ben-ole/codacy-xcov)
+
 # codacy-xcov
-Third party parser for swift coverage reports [xcov](https://github.com/nakiostudio/xcov) to keep track on [codacy](https://www.codacy.com).
+Generic parser for coverage reports to keep track on [codacy](https://www.codacy.com).
 
 # usage
 
     USAGE:
-        codacy-xcov [FLAGS] [OPTIONS] <PROJECT_TOKEN> <COMMIT> <INPUT>
+        covrep [FLAGS] [OPTIONS] <PROJECT_TOKEN> <COMMIT> <INPUT>
 
     FLAGS:
         -h, --help       Prints help information
@@ -13,14 +15,16 @@ Third party parser for swift coverage reports [xcov](https://github.com/nakiostu
 
     OPTIONS:
         -o, --output <OUTPUT>        save compiled json to `output`.
-        -p, --prefix <PREFIX>        Prefix the path to the files in the output json with given slice.
+            --prefix <PREFIX>        Prefix the path to the files in the output json with given slice.
+        -t, --type <TYPE>            Set input file type. Available: `json`. defaults to `json`
         -l, --language <LANGUAGE>    change language parameter for codacy. defaults to `swift`
+        -p, --parser <PARSER>        Set parser to use for coverage extraction. Available: `xcov`. defaults to `xcov`
 
     ARGS:
         <PROJECT_TOKEN>    Set the codacy project token
         <COMMIT>           Set the current GIT Commit UUID
         <INPUT>            Sets the input file to use
 
-# caveats
+# install
 
-xcov json reports currently don't document coverage per line, but on method level which is in turn not supported in the codacy api. 
+    This project uses [trust](https://github.com/japaric/trust) CI/CD script. [Binary releases](https://github.com/ben-ole/codacy-xcov/releases) are available for many platforms.
