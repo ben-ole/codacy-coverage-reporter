@@ -1,6 +1,9 @@
 extern crate clap;
 extern crate reqwest;
 
+#[cfg(test)]
+extern crate mockito;
+
 #[macro_use]
 extern crate serde_json;
 
@@ -28,5 +31,10 @@ pub fn run(config: clap::ArgMatches) -> Result<(), Box<Error>> {
   let parser = parsers::Parser::new(parser_type, input);
   
   // run
-  codacy::report(&parser.unwrap(), &config)
+  codacy::report( &parser.unwrap(), 
+                  config.value_of("PREFIX").unwrap_or(""),
+                  config.value_of("OUTPUT"),
+                  config.value_of("COMMIT").unwrap(),
+                  config.value_of("LANGUAGE").unwrap_or("swift"),
+                  config.value_of("PROJECT_TOKEN").unwrap() )
 }

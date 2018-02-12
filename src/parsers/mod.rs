@@ -2,8 +2,14 @@ use serde_json;
 
 mod xcov;
 
+#[cfg(test)]
+mod test_double;
+
 pub enum Parser {
-    Xcov(serde_json::Value)
+    Xcov(serde_json::Value),
+
+    #[cfg(test)]
+    Test
 }
 
 impl Parser {
@@ -21,7 +27,10 @@ impl Parser {
     pub fn total_coverage(&self) -> u8 {
 
         match *self {
-            Parser::Xcov(ref content) => xcov::total_cov(content)
+            Parser::Xcov(ref content) => xcov::total_cov(content),
+
+            #[cfg(test)]
+            Parser::Test => test_double::total_cov()
         }
     }
 
@@ -29,7 +38,10 @@ impl Parser {
     pub fn file_coverage(&self, path_prefix: &str) -> serde_json::Value  {
 
         match *self {
-            Parser::Xcov(ref content) => xcov::file_cov(&content, path_prefix)
+            Parser::Xcov(ref content) => xcov::file_cov(&content, path_prefix),
+
+            #[cfg(test)]
+            Parser::Test => test_double::file_cov()
         }
     }
 

@@ -1,5 +1,5 @@
 extern crate clap;
-extern crate codacy_xcov;
+extern crate covrep;
 
 use std::process;
 
@@ -7,10 +7,10 @@ use clap::{Arg, App};
 
 fn main(){
 
-  let matches = App::new("Codacy xcov supply")
+  let matches = App::new("Codacy coverage reporter")
         .version("1.0")
         .author("Benjamin M. <benjamin@7mind.de>")
-        .about("Parse swift coverage (xcov) and send over to codacy.")
+        .about("Parse coverage reports and send over to codacy.")
         .arg(Arg::with_name("PREFIX")
              .long("prefix")
              .value_name("PREFIX")
@@ -58,7 +58,7 @@ fn main(){
              .help("Sets the level of verbosity"))
         .get_matches();
 
-  if let Err(e) = codacy_xcov::run(matches) {
+  if let Err(e) = covrep::run(matches) {
     println!("Application error: {}", e);
     process::exit(1);
   }
