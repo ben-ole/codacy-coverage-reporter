@@ -21,11 +21,11 @@ header! { (ProjectToken, "project_token") => [String] }
 
 // use the supplied parser to extract the coverage and send them over to
 // to codacy.
-pub fn report<'a>(  parser: &parsers::Parser, 
-                    prefix: &str, 
-                    output: Option<&str>, 
-                    commit: &str, 
-                    lang: &str, 
+pub fn report<'a>(  parser: &parsers::Parser,
+                    prefix: &str,
+                    output: Option<&str>,
+                    commit: &str,
+                    lang: &str,
                     token: &str ) -> Result<(), Box<Error>> {
 
   let body = json!({
@@ -33,7 +33,7 @@ pub fn report<'a>(  parser: &parsers::Parser,
     "fileReports": parser.file_coverage(prefix)
   });
 
-  // write request payload file (optional) 
+  // write request payload file (optional)
   if let Some(ref path) = output {
     let mut file = File::create(path)?;
     file.write_all(body.to_string().as_bytes())?;
@@ -79,13 +79,14 @@ fn send(body: String, commit_uuid: &str, language: &str, project_token: &str)
 mod tests {
 
     use super::*;
-    use mockito::mock;
-    
+    use mockito::{mock, Matcher};
+    use serde_json;
+
     #[test]
     fn test_send() {
         let mock = mock_request();
 
-        let send_result = send("test".to_string(), "123abc", "swift", "xyz");
+        let send_result = send(expected_body().to_string(), "123abc", "swift", "xyz");
         assert!(send_result.is_ok());
         mock.assert();
     }
@@ -102,9 +103,25 @@ mod tests {
 
     // utils
     fn mock_request() -> mockito::Mock {
+
         mock("POST", "/2.0/coverage/123abc/swift")
+            .match_body(Matcher::JSON(expected_body()))
             .with_status(201)
             .with_header("content-type", "application/json")
             .create()
+    }
+
+    fn expected_body() -> serde_json::Value {
+        json!({
+            "total":80,
+            "fileReports": [{
+                    "filename":"main.swift",
+                    "total":80,
+                    "coverage": {
+                        "main":80
+                    }
+                }
+            ]
+        })
     }
 }
