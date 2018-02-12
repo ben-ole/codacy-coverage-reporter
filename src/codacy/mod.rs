@@ -106,6 +106,8 @@ mod tests {
 
         mock("POST", "/2.0/coverage/123abc/swift")
             .match_body(Matcher::JSON(expected_body()))
+            .match_header("content-type", "application/json")
+            .match_header("project_token", "xyz")
             .with_status(201)
             .with_header("content-type", "application/json")
             .create()
