@@ -19,7 +19,7 @@ impl Parser {
 
         match from {
             "XCOV" => Ok( Parser::Xcov(data["targets"][0].to_owned()) ),
-                _  => Err ( "Not supported parser" )
+                _  => Err( "Not supported parser" )
         }
     }
 

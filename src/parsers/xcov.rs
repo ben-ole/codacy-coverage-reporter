@@ -27,3 +27,65 @@ pub fn file_cov(content: &serde_json::Value, path_prefix: &str) -> serde_json::V
 
     json!(files_cov)
 }
+
+// UNIT TESTS
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+
+    #[test]
+    fn test_total_cov() {
+        let actual_value = total_cov( &sample_source() );
+
+        assert_eq!(actual_value, 81);
+    }
+
+    #[test]
+    fn test_file_cov() {
+        let actual_value = file_cov( &sample_source(), "app/" );
+
+        assert_eq!(actual_value[0]["filename"], "app/One.swift");
+        assert_eq!(actual_value[0]["total"], 80);
+
+        assert_eq!(actual_value[1]["filename"], "app/Two.swift");
+        assert_eq!(actual_value[1]["total"], 0);
+    }
+
+    fn sample_source() -> serde_json::Value {
+        json!({
+            "name": "Sevenmind.app",
+            "coverage": 0.8123456,
+            "files": [
+            {
+              "name": "One.swift",
+              "coverage": 0.8012443,
+              "type": "swift",
+              "functions": [
+                {
+                  "name": "App.One.methodOne(arg:String)-&gt;()",
+                  "coverage": 0.7
+                },
+                {
+                  "name": "App.One.methodTwo(arg:String)-&gt;()",
+                  "coverage": 0.9
+                }
+              ]
+            },
+            {
+              "name": "Two.swift",
+              "coverage": 0,
+              "type": "swift",
+              "functions": [
+                {
+                  "name": "App.Two.methodOne(arg:String)-&gt;()",
+                  "coverage": 0
+                }
+              ]
+            }
+            ]
+        })
+    }
+
+}
