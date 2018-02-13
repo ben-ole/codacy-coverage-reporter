@@ -1,0 +1,21 @@
+{
+	"folders":
+	[
+		{
+			"path": "."
+		}
+	],
+	"settings":
+	{
+		"cargo_build":
+		{
+			"variants":
+			{
+				"test":
+				{
+					"extra_run_args": "--test-threads 1"
+				}
+			}
+		}
+	}
+}
