@@ -26,3 +26,37 @@ impl SourceType {
     }
 
 }
+
+// UNIT TESTS
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+
+    #[test]
+    fn test_new_json() {
+        let actual_result = SourceType::new("JSON");
+
+        assert!(actual_result.is_ok());        
+        assert!(matches!(actual_result.unwrap(), SourceType::JsonFile));        
+    }
+
+    #[test]
+    fn test_new_bad() {
+        let actual_result = SourceType::new("BAD");
+
+        assert!(actual_result.is_err());
+    }
+
+    #[test]
+    fn test_load() {
+        let file_content = "{\"codacy\": \"🚀\"}";
+        let path = json_file::tests::create_test_file("dummy.json", file_content);
+
+        let source = SourceType::new("JSON").unwrap();
+
+        let actual_content = source.load(&path);
+        assert_eq!(actual_content.unwrap()["codacy"], "🚀");
+    }
+}

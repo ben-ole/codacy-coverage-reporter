@@ -20,7 +20,7 @@ fn load_file(path: &str) -> Result<String, String> {
 // UNIT TESTS
 
 #[cfg(test)]
-mod tests {
+pub mod tests {
 
     use super::*;
     use std::env;
@@ -53,13 +53,15 @@ mod tests {
 
     // test utils
 
-    fn create_test_file(name: &str, text: &str) {
+    pub fn create_test_file(name: &str, text: &str) -> String {
         
         let mut dir = env::temp_dir();
         dir.push(name);
         
-        let mut f = File::create(dir).unwrap();
+        let mut f = File::create(dir.to_owned()).unwrap();
         f.write_all(text.as_bytes()).unwrap();
         f.sync_all().unwrap();
+
+        dir.to_str().unwrap().to_owned()
     }
 }
