@@ -4,6 +4,10 @@ extern crate reqwest;
 #[cfg(test)]
 extern crate mockito;
 
+#[cfg(test)]
+#[macro_use]
+extern crate matches;
+
 #[macro_use]
 extern crate serde_json;
 

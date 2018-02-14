@@ -2,7 +2,7 @@ use serde_json;
 use std::collections::HashMap;
 
 pub fn total_cov(content: &serde_json::Value) -> u8 {
-    let acc_cov = &content["coverage"].as_f64().unwrap() * 100.0;
+    let acc_cov = &content["coverage"].as_f64().unwrap() * 100.0;    
     acc_cov.round() as u8
 }
 

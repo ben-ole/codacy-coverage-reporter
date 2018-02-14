@@ -46,3 +46,46 @@ impl Parser {
     }
 
 }
+
+// UNIT TESTS
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+
+    #[test]
+    fn test_new_xcov() {
+        let sample_data = json!({"targets":[{"test": 42}]});
+
+        let actual_result = Parser::new("XCOV", sample_data);
+
+        assert!(actual_result.is_ok());        
+        assert!(matches!(actual_result.unwrap(), Parser::Xcov(_)));        
+    }
+
+    #[test]
+    fn test_new_bad() {
+        let sample_data = json!({"targets":[{"test": 42}]});
+
+        let actual_result = Parser::new("BAD", sample_data);
+
+        assert!(actual_result.is_err());
+    }
+
+    #[test]
+    fn test_total_cov_xcov() {
+        let sample_data = json!({"targets":[{"coverage": 0.42}]});
+
+        let xcov_parser = Parser::new("XCOV", sample_data).unwrap();
+        assert_eq!(xcov_parser.total_coverage(), 42);
+    }
+
+    #[test]
+    fn test_file_coverage_xcov() {
+        let sample_data = json!({"files": []});
+
+        let xcov_parser = Parser::Xcov(sample_data);
+        assert!(matches!(xcov_parser.file_coverage("/path"), serde_json::Value::Array(_)));
+    }
+}
