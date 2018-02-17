@@ -85,6 +85,7 @@ matrix:
 
 before_install:
   - set -e
+  - apt-get install libssl-dev
   - rustup self update
 
 install:
@@ -95,6 +96,17 @@ script:
   - bash ci/script.sh
 
 after_script: set +e
+
+after_success: |
+  if [[ "$TRAVIS_RUST_VERSION" == stable ]]; then
+    bash <(curl https://raw.githubusercontent.com/xd009642/tarpaulin/master/travis-install.sh)
+    # Uncomment the following line for coveralls.io
+    # cargo tarpaulin --ciserver travis-ci --coveralls $TRAVIS_JOB_ID
+
+    # Uncomment the following two lines create and upload a report for codecov.io
+    cargo tarpaulin --out Xml
+    # bash <(curl -s https://codecov.io/bash)
+  fi
 
 before_deploy:
   - sh ci/before_deploy.sh
@@ -119,9 +131,6 @@ deploy:
   skip_cleanup: true
 
 cache: cargo
-before_cache:
-  # Travis can't cache files that are not readable by "others"
-  - chmod -R a+r $HOME/.cargo
 
 branches:
   only:
