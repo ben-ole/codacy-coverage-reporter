@@ -32,3 +32,12 @@ Generic multi platform parser for coverage reports to keep track on [codacy](htt
 # install
 
 This project uses [trust](https://github.com/japaric/trust) CI/CD script. [Binary releases](https://github.com/sevenmind/codacy-coverage-reporter/releases) are available for many platforms.
+
+##### sample config with circleci
+
+    - run:
+        name: install codacy coverage uploader
+        command: curl -L https://github.com/sevenmind/codacy-coverage-reporter/releases/download/v1.0.0/covrep-v1.0.0-i686-apple-darwin.tar.gz | tar -xz && chmod +x covrep
+    - run:
+        name: upload coverage report to codacy
+        command: ./covrep $CODACY_PROJECT_TOKEN $CIRCLE_SHA1 $FL_OUTPUT_DIR/xcov/report.json
