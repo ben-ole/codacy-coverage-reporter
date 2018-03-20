@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/sevenmind/codacy-coverage-reporter.svg?branch=master)](https://travis-ci.org/sevenmind/codacy-coverage-reporter)
+[![codecov](https://codecov.io/gh/sevenmind/codacy-coverage-reporter/branch/master/graph/badge.svg)](https://codecov.io/gh/sevenmind/codacy-coverage-reporter)
 
 # codacy-xcov
 Generic parser for coverage reports to keep track on [codacy](https://www.codacy.com).
