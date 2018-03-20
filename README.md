@@ -2,7 +2,10 @@
 [![codecov](https://codecov.io/gh/sevenmind/codacy-coverage-reporter/branch/master/graph/badge.svg)](https://codecov.io/gh/sevenmind/codacy-coverage-reporter)
 
 # codacy-xcov
-Generic parser for coverage reports to keep track on [codacy](https://www.codacy.com).
+Generic multi platform parser for coverage reports to keep track on [codacy](https://www.codacy.com). Written in `Rust` => hassle free binary release without any dependencies.
+
+# supported coverage reports
+- iOS (xcov)[https://github.com/nakiostudio/xcov] json reports
 
 # usage
 
@@ -28,4 +31,4 @@ Generic parser for coverage reports to keep track on [codacy](https://www.codacy
 
 # install
 
-    This project uses [trust](https://github.com/japaric/trust) CI/CD script. [Binary releases](https://github.com/ben-ole/codacy-xcov/releases) are available for many platforms.
+    This project uses [trust](https://github.com/japaric/trust) CI/CD script. [Binary releases](https://github.com/sevenmind/codacy-coverage-reporter/releases) are available for many platforms.
