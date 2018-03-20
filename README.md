@@ -31,4 +31,4 @@ Generic multi platform parser for coverage reports to keep track on [codacy](htt
 
 # install
 
-    This project uses [trust](https://github.com/japaric/trust) CI/CD script. [Binary releases](https://github.com/sevenmind/codacy-coverage-reporter/releases) are available for many platforms.
+This project uses [trust](https://github.com/japaric/trust) CI/CD script. [Binary releases](https://github.com/sevenmind/codacy-coverage-reporter/releases) are available for many platforms.
