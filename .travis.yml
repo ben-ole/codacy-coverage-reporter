@@ -19,25 +19,6 @@ matrix:
   # TODO These are all the build jobs. Adjust as necessary. Comment out what you
   # don't need
   include:
-    # # Android
-    # - env: TARGET=aarch64-linux-android DISABLE_TESTS=1
-    # - env: TARGET=arm-linux-androideabi DISABLE_TESTS=1
-    # - env: TARGET=armv7-linux-androideabi DISABLE_TESTS=1
-    # - env: TARGET=i686-linux-android DISABLE_TESTS=1
-    # - env: TARGET=x86_64-linux-android DISABLE_TESTS=1
-
-    # # iOS
-    # - env: TARGET=aarch64-apple-ios DISABLE_TESTS=1
-    #   os: osx
-    # - env: TARGET=armv7-apple-ios DISABLE_TESTS=1
-    #   os: osx
-    # - env: TARGET=armv7s-apple-ios DISABLE_TESTS=1
-    #   os: osx
-    # - env: TARGET=i386-apple-ios DISABLE_TESTS=1
-    #   os: osx
-    # - env: TARGET=x86_64-apple-ios DISABLE_TESTS=1
-    #   os: osx
-
     # Linux
     - env: TARGET=aarch64-unknown-linux-gnu
     - env: TARGET=arm-unknown-linux-gnueabi
@@ -100,20 +81,12 @@ after_script: set +e
 before_deploy:
   - sh ci/before_deploy.sh
 
-deploy:
-  # TODO update `api_key.secure`
-  # - Create a `public_repo` GitHub token. Go to: https://github.com/settings/tokens/new
-  # - Encrypt it: `travis encrypt 0123456789012345678901234567890123456789
-  # - Paste the output down here
+deploy:  
   api_key:
     secure: T2RNBtH76LTbyPhMgRgcBw7W/86UGDtmXxkMTUQgLZwRW/2fovWDrpbm2zJKrNiWIuTUCbSbw9y0oPnfiMwr1tmzJfQBYatYJabMwQjtmd8YZSm+qUKJ2yJbk7ckhA9rG4rLpTZQ2bK4lOLDwO5sZ8HYOCQt7bNc7bEWi25geq0wJ8cAMab1wEP/jvghEb7TrAjg1g50thg2jRXfUIH1Lek9MKg1DoblyM8Xl2kn0+5aL2f4hBo9yi3/aseFKgqrL3PI8h4r58Vyv0HHiDh42ivExY6mbQngB6F/8IQybf4Sl++N108LsC/h4T30I8U1ZO+6iXLtt9bURBm/CaW16XHxJhHhYON1gWO1Oi6iOLgzoRVaY2jbJiRuoa9TJxXFbx3LMB2vvPcFK3W05u0Kwsfd9xEoDbGm2GhiM2ffro77hlzZ/UphkAvegOJF5S20LF5XB1Kztr8Xqben869lCuJqgOhbFbHtr07EAe1dxzgXZSK8zP1ffSh4p2W7FU3dAkbQ+49e8fly6diQNn7lUVUXb9Gtz7MZH8ywCkVHPZzrDAbcqongaLnngCNw1D8PcXpiBrAsmrDMzvX+juU6GkiIeNKbniMsoObtLMCUeU3sr7vLSHaUiI0AMu2Z/qzroF+ahqVaHK6LYqZUFaDwB+WZ4IhNqQovLEjBQafwQDI=
   file_glob: true
   file: $CRATE_NAME-$TRAVIS_TAG-$TARGET.*
-  on:
-    # TODO Here you can pick which targets will generate binary releases
-    # In this example, there are some targets that are tested using the stable
-    # and nightly channels. This condition makes sure there is only one release
-    # for such targets and that's generated using the stable channel
+  on:    
     condition: $TRAVIS_RUST_VERSION = stable
     tags: true
   provider: releases
@@ -122,12 +95,11 @@ deploy:
 cache: cargo
 
 before_cache:
-  # Travis can't cache files that are not readable by "others"
   - chmod -R a+r $HOME/.cargo
 
 branches:
   only:
-    # release tags
+    # release tags like v1.0.0
     - /^v\d+\.\d+\.\d+.*$/
     - master
 
