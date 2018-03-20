@@ -5,7 +5,7 @@
 Generic multi platform parser for coverage reports to keep track on [codacy](https://www.codacy.com). Written in `Rust` => hassle free binary release without any dependencies.
 
 # supported coverage reports
-- iOS (xcov)[https://github.com/nakiostudio/xcov] json reports
+- iOS [xcov](https://github.com/nakiostudio/xcov) json reports
 
 # usage
 
@@ -31,4 +31,4 @@ Generic multi platform parser for coverage reports to keep track on [codacy](htt
 
 # install
 
-    This project uses [trust](https://github.com/japaric/trust) CI/CD script. [Binary releases](https://github.com/sevenmind/codacy-coverage-reporter/releases) are available for many platforms.
+This project uses [trust](https://github.com/japaric/trust) CI/CD script. [Binary releases](https://github.com/sevenmind/codacy-coverage-reporter/releases) are available for many platforms.
